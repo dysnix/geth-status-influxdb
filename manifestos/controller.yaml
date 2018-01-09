@@ -4,7 +4,15 @@ metadata:
   name: geth-status-influxdb
   namespace: kube-system
 spec:
+  selector:
+    matchLabels:
+      k8s-app: geth-status-influxdb
   template:
+    metadata:
+      labels:
+        k8s-app: geth-status-influxdb
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       containers:
       - name: geth-status-influxdb
