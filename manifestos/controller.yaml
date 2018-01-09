@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: geth-status-influxdb
+  namespace: kube-system
+spec:
+  template:
+    spec:
+      containers:
+      - name: geth-status-influxdb
+        image: kuberstack/geth-status-influxdb
+        resources:
+          limits:
+            cpu: 100m
+            memory: 50Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
