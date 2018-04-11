@@ -2,6 +2,7 @@
 import time
 import datetime
 
+import requests
 from influxdb import InfluxDBClient
 from web3 import Web3, HTTPProvider
 import settings
@@ -17,24 +18,30 @@ def get_timestamp():
     return datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
-def get_eth_status():
-    syncing = w3.eth.syncing
-    if syncing:
-        sync_diff = syncing['highestBlock'] - syncing['currentBlock']
-        highest_block = syncing['highestBlock']
-        current_block = syncing['currentBlock']
-    else:
-        sync_diff = 0
-        highest_block = current_block = w3.eth.blockNumber
+def get_etherscan_highest_block():
+    request_params = {'module': 'proxy',
+                      'action': 'eth_blockNumber',
+                      'apikey': settings.ETHERSCAN_API_KEY}
+    response = requests.get(settings.ETHERSCAN_API_URL, params=request_params)
+    response_json = response.json()
+    highest_block_hex = response_json.get('result')
+    highest_block = int(highest_block_hex, 0)
+    return highest_block
 
-    #pending_txs_count = w3.eth.pendingTransactions.length
+
+def get_eth_status():
+    highest_block = get_etherscan_highest_block()
+    current_block = w3.eth.blockNumber
+    sync_diff = highest_block - current_block
+
+    # pending_txs_count = w3.eth.pendingTransactions.length
     accounts_count = len(w3.eth.accounts)
 
     status = {
         'highestBlock': highest_block,
         'currentBlock': current_block,
         'syncDiff': sync_diff,
-        #'pendingTransactionsCount': pending_txs_count,
+        # 'pendingTransactionsCount': pending_txs_count,
         'accountsCount': accounts_count
     }
 
