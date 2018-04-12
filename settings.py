@@ -13,6 +13,10 @@ INFLUXDB_DB_NAME = os.environ.get('INFLUXDB_DB_NAME', 'k8s')
 # Update interval
 UPDATE_INTERVAL = int(os.environ.get('UPDATE_INTERVAL', 60))
 
+# Etherscan
+ETHERSCAN_API_URL = 'https://api.etherscan.io/api'
+ETHERSCAN_API_KEY = os.environ.get('ETHERSCAN_API_KEY', 'YourApiKeyToken')
+
 try:
     from local_settings import *
 except ImportError:
